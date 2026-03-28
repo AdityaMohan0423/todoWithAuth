@@ -5,7 +5,9 @@ const { TODO } = require("../models/modes.js");
 
 //getting todos
 router.get("/todos", authCheck, async (req, res) => {
-  const todos = await TODO.find();
+  const todos = await TODO.find({
+    userId: req.body.userId,
+  }).sort({ _id: -1 }); // sorted from newest to oldest
   res.json(todos);
 });
 
@@ -22,6 +24,18 @@ router.post("/todos", authCheck, async (req, res) => {
   });
 
   res.send(`todo created with id :`);
+});
+//to update todo
+router.put("/todos/:id", async (req, res) => {
+  try {
+    await TODO.findByIdAndUpdate(req.params.id, {
+      title: req.body.title,
+      description: req.body.description,
+    });
+    res.send("Todo Updated Successfully");
+  } catch (e) {
+    res.send("Error Occured: ", e);
+  }
 });
 
 //to delete todo
