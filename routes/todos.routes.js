@@ -24,6 +24,18 @@ router.post("/todos", authCheck, async (req, res) => {
   res.send(`todo created with id :`);
 });
 
+//to delete todo
+router.delete("/delete/:id", authCheck, async (req, res) => {
+  const todo = await TODO.findOneAndDelete({
+    _id: req.params.id,
+    userId: req.body.userId,
+  });
+
+  if (!todo) return res.status(404).send("Can't delete todo!!");
+
+  res.send("Todo delete !");
+});
+
 module.exports = {
   todoRoutes: router,
 };
