@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { secret } = require("../database/data.js");
 const { USER } = require("../models/modes.js");
 
 //signup endpoint
@@ -38,7 +37,7 @@ router.get("/signin", async (req, res) => {
       username: userExist.username,
       userId: userExist._id,
     },
-    secret,
+    process.env.SECRET,
   );
 
   res.json({

@@ -1,4 +1,3 @@
-const { secret } = require("../database/data.js");
 const jwt = require("jsonwebtoken");
 const { USER } = require("../models/modes.js");
 
@@ -6,7 +5,7 @@ async function authcheck(req, res, next) {
   const token = req.headers.token;
   if (!token) return res.status(403).send("User Not signedIn !!");
 
-  const decoded = jwt.verify(token, secret);
+  const decoded = jwt.verify(token, process.env.SECRET);
   if (!decoded) return res.status(401).send("unauthorized Access !!");
 
   const userExist = await USER.findOne({
