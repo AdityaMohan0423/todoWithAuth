@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-let { USERS, global_userId, secret } = require("../database/data.js");
+const { secret } = require("../database/data.js");
+const { USER } = require("../models/modes.js");
 
 //signup endpoint
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const userExist = USERS.find((el) => el.username === username);
+  const userExist = await USER.findOne({ username: username });
 
   if (userExist) return res.status(409).send("User already exist !!");
 
-  USERS.push({
+  await USER.create({
     username: username,
-    userId: global_userId++,
     password: password,
   });
 
@@ -22,20 +22,21 @@ router.post("/signup", (req, res) => {
 });
 
 //signin endpoint
-router.get("/signin", (req, res) => {
+router.get("/signin", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const userExist = USERS.find(
-    (el) => el.username === username && el.password === password,
-  );
+  const userExist = await USER.findOne({
+    username: username,
+    password: password,
+  });
 
   if (!userExist) res.status(404).send("User does not exist!");
 
   const token = jwt.sign(
     {
       username: userExist.username,
-      userId: userExist.userId,
+      userId: userExist._id,
     },
     secret,
   );
@@ -47,11 +48,11 @@ router.get("/signin", (req, res) => {
 });
 
 //to get all users
-router.get("/getusers", (req, res) => {
-  console.log(USERS);
+router.get("/getusers", async (req, res) => {
+  const users = await USER.find();
   res.json({
     message: "All users",
-    USERS: USERS,
+    USERS: users,
   });
 });
 

@@ -1,16 +1,18 @@
-const { USERS, secret } = require("../database/data.js");
+const { secret } = require("../database/data.js");
 const jwt = require("jsonwebtoken");
+const { USER } = require("../models/modes.js");
 
-function authcheck(req, res, next) {
+async function authcheck(req, res, next) {
   const token = req.headers.token;
   if (!token) return res.status(403).send("User Not signedIn !!");
 
   const decoded = jwt.verify(token, secret);
   if (!decoded) return res.status(401).send("unauthorized Access !!");
 
-  const userExist = USERS.find(
-    (el) => el.username === decoded.username && el.userId === decoded.userId,
-  );
+  const userExist = await USER.findOne({
+    username: decoded.username,
+    _id: decoded.userId,
+  });
   if (!userExist) return res.status(401).send("unauthorized Access !!");
 
   req.body.username = decoded.username;
