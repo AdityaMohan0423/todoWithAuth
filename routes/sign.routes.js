@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-let { USERS, global_userId } = require("../database/data.js");
+let { USERS, global_userId, secret } = require("../database/data.js");
 
+//signup endpoint
 router.post("/signup", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -20,6 +21,7 @@ router.post("/signup", (req, res) => {
   res.send("User created successfully");
 });
 
+//signin endpoint
 router.get("/signin", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -32,9 +34,10 @@ router.get("/signin", (req, res) => {
 
   const token = jwt.sign(
     {
-      username: userExist.userId,
+      username: userExist.username,
+      userId: userExist.userId,
     },
-    "secret123",
+    secret,
   );
 
   res.json({
@@ -43,6 +46,7 @@ router.get("/signin", (req, res) => {
   });
 });
 
+//to get all users
 router.get("/getusers", (req, res) => {
   console.log(USERS);
   res.json({

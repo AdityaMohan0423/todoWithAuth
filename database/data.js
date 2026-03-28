@@ -1,5 +1,6 @@
 let global_userId = 1;
 let gloabal_todoId = 1;
+const secret = "secrest123";
 
 let USERS = [
   {
@@ -15,4 +16,5 @@ module.exports = {
   TODOS: TODOS,
   gloabal_todoId: gloabal_todoId,
   global_userId: global_userId,
+  secret: secret,
 };
